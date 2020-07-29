@@ -5,6 +5,7 @@ inherited frmTransServerMasuk: TfrmTransServerMasuk
   ClientHeight = 637
   ClientWidth = 1008
   OldCreateOrder = True
+  ExplicitLeft = -157
   ExplicitWidth = 1024
   ExplicitHeight = 676
   PixelsPerInch = 96
@@ -403,16 +404,16 @@ inherited frmTransServerMasuk: TfrmTransServerMasuk
           object lblAmpere: TLabel
             Left = 7
             Top = 71
-            Width = 45
+            Width = 115
             Height = 17
-            Caption = 'Ampere'
+            Caption = 'Arus Maks (Ampere)'
           end
           object lblWatt: TLabel
             Left = 7
             Top = 99
-            Width = 26
+            Width = 99
             Height = 17
-            Caption = 'Watt'
+            Caption = 'Daya Maks (Watt)'
           end
           object edtMCB: TEdit
             Left = 57
@@ -439,18 +440,18 @@ inherited frmTransServerMasuk: TfrmTransServerMasuk
               'quarternary')
           end
           object edtAmpere: TEdit
-            Left = 58
+            Left = 128
             Top = 68
-            Width = 332
+            Width = 262
             Height = 25
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 2
             Text = 'edtAmpere'
           end
           object edtWatt: TEdit
-            Left = 58
+            Left = 128
             Top = 99
-            Width = 332
+            Width = 262
             Height = 25
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 3

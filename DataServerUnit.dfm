@@ -3,6 +3,7 @@ inherited frmDataServer: TfrmDataServer
   PixelsPerInch = 96
   TextHeight = 15
   inherited pnlTitle: TPanel
+    ExplicitWidth = 784
     inherited pnlClose: TPanel
       Left = 755
       ExplicitLeft = 755
@@ -13,6 +14,8 @@ inherited frmDataServer: TfrmDataServer
   end
   inherited pnlData: TPanel
     inherited pnlGrid: TPanel
+      ExplicitWidth = 784
+      ExplicitHeight = 387
       inherited ftrDaftar: TStatusBar
         Top = 367
         Width = 784
@@ -196,7 +199,7 @@ inherited frmDataServer: TfrmDataServer
             Footer.DisplayFormat = '#.00'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = 'Ampere'
+            Title.Caption = 'Arus Maks (Ampere)'
             Width = 51
           end
           item
@@ -209,7 +212,7 @@ inherited frmDataServer: TfrmDataServer
             Footer.DisplayFormat = '#.00'
             Footer.ValueType = fvtSum
             Footers = <>
-            Title.Caption = 'Watt'
+            Title.Caption = 'Daya Maks (Watt)'
           end>
       end
     end
@@ -221,8 +224,14 @@ inherited frmDataServer: TfrmDataServer
         inherited btnPilih: TAdvToolButton
           TMSStyle = 0
         end
+        inherited edtKeyword: TEdit
+          Height = 26
+          ExplicitWidth = 190
+          ExplicitHeight = 26
+        end
       end
       inherited pnlButton: TPanel
+        ExplicitLeft = 427
         inherited btnTambah: TAdvToolButton
           TMSStyle = 0
         end
