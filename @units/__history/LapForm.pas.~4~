@@ -1,0 +1,437 @@
+unit LapForm;
+
+interface
+
+uses
+  ArReports, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
+  Forms, Dialogs, BaseForm, Buttons, ExtCtrls, StdCtrls, ImgList, ComCtrls,
+  ActnList, DB, ZAbstractRODataset,
+  ZDataset, Menus, ToolWin,
+  ZAbstractDataset, ZStoredProcedure, frxCross, AdvToolBtn, System.Actions,
+  System.ImageList;
+
+type
+  TfrmLap = class(TfrmBase)
+    pnlData: TPanel;
+    pnlOption: TPanel;
+    pnlOptTanggal: TPanel;
+    lblDari: TLabel;
+    lblSampai: TLabel;
+    dtp1: TDateTimePicker;
+    dtp2: TDateTimePicker;
+    actDaftar: TActionList;
+    _Cetak: TAction;
+    _ThisMonth: TAction;
+    _PrevMonth: TAction;
+    _NextMonth: TAction;
+    _Today: TAction;
+    _PrevDay: TAction;
+    _NextDay: TAction;
+    _Layout: TAction;
+    pnlOptButton: TPanel;
+    pmLaporan: TPopupMenu;
+    _PrepareDataset: TAction;
+    btnPilihan: TButton;
+    btnThisMonth: TAdvToolButton;
+    btnPrevMonth: TAdvToolButton;
+    btnNextMonth: TAdvToolButton;
+    btnPrevDay: TAdvToolButton;
+    btnToday: TAdvToolButton;
+    btnNextDay: TAdvToolButton;
+    btnOptCetak: TAdvToolButton;
+    btnOptLayout: TAdvToolButton;
+    procedure _ThisMonthExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure _LayoutExecute(Sender: TObject);
+    procedure _CetakExecute(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure _PrepareDatasetExecute(Sender: TObject);
+    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure pnlDataResize(Sender: TObject);
+    procedure btnPilihanClick(Sender: TObject);
+    procedure tmr1Timer(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+  private       
+    FReport      : TArReport;
+    FQuery       : TZReadOnlyQuery;
+    FProc        : TZStoredProc;
+    FSource      : TDataSource;
+    FReportTitle : string;
+    
+    FMoreQuery   : array of TZReadOnlyQuery;
+    //FMoreAlias   : array of string;
+    
+    procedure SetReportTitle(const Value: string);
+    procedure SetReportAlias(const Value: string);
+    procedure SetReportDataset(const Value: TDataset);
+    procedure SetReportFile(const Value: string);
+    function GetReportAlias: string;
+    function GetReportDataset: TDataset;
+    function GetReportFile: string;  
+    { Private declarations }
+  protected
+    FQCompany : TZReadOnlyQuery;
+    property Report : TArReport read FReport;
+    property RQuery : TZReadOnlyQuery read FQuery;
+  public
+    { Public declarations }              
+    { untuk multi query digunakan proses berikut :
+      1. set file report
+      2. gunakan query utama
+         UseQuery (''); atau UseSP();
+      3. gunakan AddMoreData() untuk menambahkan dataset  }
+    Animating : Boolean;
+    property ReportDataset : TDataset read GetReportDataset write SetReportDataset;
+    property ReportAlias   : string read GetReportAlias write SetReportAlias;
+    property ReportFile    : string read GetReportFile write SetReportFile;
+    property ReportTitle   : string read FReportTitle write SetReportTitle;
+    procedure UseQuery (s:string);
+    procedure UseSP (ASPName:string;AParams:array of Variant);
+    procedure ParValues(ANames: array of string; AValues: array of Variant);
+
+    procedure ClearMoreData;
+    procedure AddMoreData (AAlias, AMasterField, ALinkField, ASQLText:string);
+  end;
+
+var
+  frmLap: TfrmLap;
+
+implementation
+
+uses ArFunctions, ArComponents, ArDBModule, TypeUnit, Style;
+
+{$R *.dfm}
+var BaseReportTitle : string;
+
+{ TfrmLap }
+procedure TfrmLap._ThisMonthExecute(Sender: TObject);
+begin
+  inherited;
+     if Sender = _ThisMonth then
+     begin
+          dtp1.date := FirstDateThisMonth(date);
+          dtp2.date := LastDateThisMonth(date);
+     end else
+     if Sender = _NextMonth then
+     begin
+          dtp1.date := FirstDateThisMonth(IncMonth(dtp1.Date, 1));
+          dtp2.date := LastDateThisMonth(dtp1.Date);
+     end else
+     if Sender = _PrevMonth then
+     begin
+          dtp1.date := FirstDateThisMonth(IncMonth(dtp1.Date, -1));
+          dtp2.date := LastDateThisMonth(dtp1.Date);
+     end else
+     if Sender = _Today then
+     begin
+          dtp1.date := Now;
+          dtp2.date := Now;
+     end else
+     if Sender = _PrevDay then
+     begin
+          dtp1.date := dtp1.date -1;
+          dtp2.date := dtp1.date;
+     end else
+     if Sender = _NextDay then
+     begin
+          dtp1.date := dtp1.date + 1;
+          dtp2.date := dtp1.date;
+     end;
+end;
+
+procedure TfrmLap.FormCreate(Sender: TObject);
+var
+  pnlcolor, pnlTextColor : TColor;
+begin
+  inherited;           
+     if (not Assigned(FReport)) then
+     begin
+          FReport := TArReport.Create(Self);
+          //FReport.OnPrepare := _PrepareDataset.OnExecute;
+          FReport.PreviewIn := pnlData;
+     end;
+
+     FQuery  := ROQry(''); FQuery.EnableControls;
+     FSource := TDataSource.Create(Self);
+     FSource.DataSet := FQuery;
+
+     FProc := TZStoredProc.Create(Self);
+     FProc.Connection := ArDB.FDBCon;
+
+     dtp1.date := FirstDateThisMonth(date);
+     dtp2.date := LastDateThisMonth(date);
+     
+     if pnlOption.Visible then
+     begin
+          SetGlyphBtns([ btnPrevMonth, btnThisMonth, btnNextMonth,
+                         btnPrevDay, btnToday, btnNextDay]);
+     end;
+
+     pnlcolor := CLR_BLACK;
+     pnlTextColor := CLR_WHITE;
+
+//     pnlOption.Colors.ButtonBottom := pnlcolor;
+//     pnlOption.Colors.ButtonTop := pnlcolor;
+//     pnlOption.Colors.ButtonColor := pnlcolor;
+//     pnlOption.Colors.Color := pnlcolor;
+//     pnlOption.Colors.FrameBottom := pnlcolor;
+//     pnlOption.Colors.FrameTop := pnlcolor;
+//
+//     pnlOption.Colors.HotTrackText := pnlTextColor;
+//     pnlOption.Font.Color := pnlTextColor;
+//     pnlOption.ButtonFont.Color := pnlTextColor;
+//     pnlOption.ButtonFont.Size := 10;
+//     pnlOption.ButtonFont.Style := [];
+//     btnPilihan.Font.Color := pnlTextColor; 
+//
+//     pnlOption.Visible := False;
+//     pnlOption.Height := 1500;
+end;
+
+procedure TfrmLap._LayoutExecute(Sender: TObject);
+begin
+  inherited;
+     with FReport do
+     try             
+          Screen.Cursor := crHourGlass;
+          _Layout.Enabled := False;
+
+          _PrepareDataset.Execute;
+          if not Dataset.Active then Dataset.Open;
+
+          ShowDesign;
+     finally
+          _Layout.Enabled := True;
+          Screen.Cursor := crDefault;
+     end;
+end;
+
+procedure TfrmLap._CetakExecute(Sender: TObject);
+begin
+  inherited;
+     with FReport do
+     try              
+          Screen.Cursor := crHourGlass;
+          _Cetak.Enabled := False;
+
+          _PrepareDataset.Execute;
+          
+          if not Dataset.Active then Dataset.Open;
+          Dataset.First;
+          if Dataset.Eof then Peringatan ('Data tidak ditemukan',True);
+
+          ShowPreview;
+     finally
+          _Cetak.Enabled := True;
+          Screen.Cursor := crDefault;
+     end;
+end;
+
+procedure TfrmLap.FormDestroy(Sender: TObject);
+begin
+  inherited;                                                               
+     if Assigned(FSource) then FreeAndNil(FSource); 
+     if Assigned(FQuery) then begin FQuery.Close; FreeAndNil(FQuery); end;
+     if Assigned(FProc) then begin FProc.Close; FreeAndNil(FProc); end;
+     if Assigned(FReport) then FreeAndNil(FReport); 
+end;
+
+procedure TfrmLap.btnCloseClick(Sender: TObject);
+begin
+     if Assigned(FReport) and FReport.Showing then FReport.Close
+     else inherited;
+end;
+
+procedure TfrmLap.UseQuery(s: string);
+begin
+     with FQuery do begin Close; SQL.Text := s; Open; end;
+     FReport.Dataset := FQuery;
+end;
+
+procedure TfrmLap.FormShow(Sender: TObject);
+begin
+  inherited;
+     BaseReportTitle := pnlTitle.Caption;
+end;
+
+procedure TfrmLap._PrepareDatasetExecute(Sender: TObject);
+begin
+  inherited;
+     FReport.SetParValues
+          (['NamaPerusahaan','AlamatPerusahaan','TelpPerusahaan','Judul',
+           'Tgl1','Tgl2','Tanggal1','Tanggal2','NamaUser'],
+           [__Company[cpNama], __Company[cpAlamat], __Company[cpTelp], Caption,
+           dtp1.Date, dtp2.Date, dtp1.Date, dtp2.Date, User.Nama]
+          );    
+     if not Assigned (FQCompany) then
+          FQCompany:=ROQry(' select "'+__Company[cpNama]+'" NamaPerusahaan '+
+                          '   , "'+__Company[cpAlamat]+'" AlamatPerusahaan '+
+                          '   , "'+__Company[cpTelp]+'" TelpPerusahaan '+
+                          '   , "'+Caption+'" Judul '+
+                          '   , "'+FReportTitle+'" NamaLaporan '+
+                          '   , cast("'+FDate(dtp1.Date)+'" as date) Tgl1 '+
+                          '   , cast("'+FDate(dtp2.Date)+'" as date) Tgl2 '+
+                          '   , "'+User.Nama+'" NamaUser '+
+                          '   , nilai Logo from setting where nama="logo" ')
+     else if FQCompany.Active then FQCompany.Refresh else FQCompany.Open;
+     FReport.ClearMoreData;
+     FReport.AddMoreData(FQCompany, 'Company');
+end;
+
+procedure TfrmLap.ParValues(ANames: array of string;
+  AValues: array of Variant);
+begin
+     FReport.SetParValues(ANames, AValues);
+end;
+
+procedure TfrmLap.FormMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+begin
+  inherited;
+     if Assigned(FReport) then
+          FReport.MouseWheelScroll(WheelDelta, False, ssCtrl in Shift);
+end;
+
+procedure TfrmLap.pnlDataResize(Sender: TObject);
+begin
+  inherited;
+     if Assigned(FReport) then FReport.Resize;
+end;
+
+procedure TfrmLap.btnPilihanClick(Sender: TObject);
+begin
+  inherited;
+     pmLaporan.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+end;
+
+procedure TfrmLap.SetReportTitle(const Value: string);
+begin
+     FReportTitle := Value;
+     pnlTitle.Caption := BaseReportTitle+' :: '+StripHotkey(Value);
+end;
+
+function TfrmLap.GetReportAlias: string;
+begin
+     Result := FReport.Alias;
+end;
+
+function TfrmLap.GetReportDataset: TDataset;
+begin  
+     Result := FReport.Dataset;
+end;
+
+function TfrmLap.GetReportFile: string;
+begin    
+     Result := FReport.FileName;
+end;
+
+procedure TfrmLap.SetReportAlias(const Value: string);
+begin
+     if FReport.Alias <> Value then
+          FReport.Alias := Value;
+end;
+
+procedure TfrmLap.SetReportDataset(const Value: TDataset);
+begin
+     if FReport.Dataset <> Value then
+          FReport.Dataset := Value;
+end;
+
+procedure TfrmLap.SetReportFile(const Value: string);
+begin
+     if FReport.FileName <> Value then
+          FReport.FileName := Value;
+end;
+
+procedure TfrmLap.ClearMoreData;
+var i : Word;
+begin
+     if Length(FMoreQuery) > 0 then
+     begin
+          for i := 0 to Length(FMoreQuery)-1 do
+               if Assigned(FMoreQuery[i]) then FreeAndNil(FMoreQuery[i]);
+          SetLength(FMoreQuery, 0);
+     end;
+     //SetLength (FMoreAlias, 0);
+     FReport.ClearMoreData;
+end;   
+
+{ AAlias  : isi username di frds (fr component)
+  AMasterField  dan ALinkField : jika dataset berhubungan atau diisi '' untuk kosongan
+}
+procedure TfrmLap.AddMoreData(AAlias, AMasterField, ALinkField, ASQLText: string);
+var n : Word;
+begin
+     n := Length(FMoreQuery) + 1;
+     //SetLength (FMoreAlias, n);     FMoreAlias[n-1] := AAlias;
+
+     SetLength (FMoreQuery, n);
+     if not Assigned(FMoreQuery[n-1]) then
+     begin
+          FMoreQuery[n-1] := TZReadOnlyQuery.Create (Self);
+          FMoreQuery[n-1].Connection := ArDB.FDBCon;       
+          FMoreQuery[n-1].DisableControls;
+     end;
+     FMoreQuery[n-1].Close;
+     FMoreQuery[n-1].SQL.Text  := ASQLText;
+
+     if (AMasterField <> '')and(ALinkField <> '') then
+     begin
+          FMoreQuery[n-1].MasterSource := FSource;
+          FMoreQuery[n-1].MasterFields := AMasterField;
+          FMoreQuery[n-1].LinkedFields := ALinkField;
+     end;
+
+     FReport.AddMoreData(FMoreQuery[n-1], AAlias);
+end;
+
+procedure TfrmLap.UseSP(ASPName: string; AParams: array of Variant);
+var i : word;
+begin
+     with FProc do
+     begin
+          Close;
+          FProc.StoredProcName := ASPName;
+          if not Prepared then Prepare;
+          for i := 0 to Length(AParams) -1 do
+               Params[i].Value := Aparams[i];
+          Open;
+     end;
+
+     FReport.Dataset := FProc;
+end;
+
+procedure TfrmLap.tmr1Timer(Sender: TObject);
+var
+  Pos : Integer;
+  pnlOptionHeightAwal : Integer;
+  pnlOptionLeftPos : Integer;
+begin
+  inherited;
+  try
+    Animating := True;
+    pnlOptionHeightAwal := pnlOption.Height; //sini
+    pnlOptionLeftPos := pnlOption.Left;
+    tmr1.Enabled := False;
+  //  AnimateWindow(pnlBottom.Handle, 600, AW_SLIDE or AW_VER_POSITIVE or AW_ACTIVATE);
+    pnlOption.Align := alCustom;
+    Pos := 600;
+    pnlOption.Left := pnlOption.Left - Pos;
+    pnlOption.Visible := True;
+    Anim_Slide(pnlOption, QuintEaseOut, Horizontal, 600, Pos);
+    pnlOption.Align := alLeft;
+  finally
+    Animating := False;
+  end;
+end;
+
+procedure TfrmLap.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  inherited;
+  CanClose := not (Animating);
+end;
+
+end.

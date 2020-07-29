@@ -1,0 +1,414 @@
+inherited frmData: TfrmData
+  Left = 150
+  Top = 191
+  Width = 908
+  Height = 500
+  Caption = '@Data utk Master dan Transaksi'
+  Constraints.MinHeight = 500
+  Constraints.MinWidth = 800
+  OnMouseWheel = FormMouseWheel
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited pnlTitle: TPanel
+    Width = 892
+    inherited pnlClose: TPanel
+      Left = 863
+      inherited btnClose: TAdvToolButton
+        TMSStyle = 0
+      end
+    end
+  end
+  object pnlData: TPanel [1]
+    Left = 0
+    Top = 28
+    Width = 892
+    Height = 433
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 1
+    OnResize = pnlDataResize
+    object pnlGrid: TPanel
+      Left = 0
+      Top = 49
+      Width = 892
+      Height = 384
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 1
+      object ftrDaftar: TStatusBar
+        Left = 0
+        Top = 364
+        Width = 892
+        Height = 20
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clMaroon
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        Panels = <>
+        UseSystemFont = False
+      end
+      object dbgDaftar: TDBGridEh
+        Left = 0
+        Top = 0
+        Width = 892
+        Height = 364
+        Align = alClient
+        AutoFitColWidths = True
+        BorderStyle = bsNone
+        DataSource = dsDaftar
+        DynProps = <>
+        FixedColor = clWindow
+        Flat = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghFitRowHeightToText, dghRowHighlight, dghDblClickOptimizeColWidth, dghDialogFind, dghShowRecNo, dghColumnResize, dghColumnMove, dghAutoFitRowHeight, dghExtendVertLines]
+        ParentFont = False
+        PopupMenu = pmDaftar
+        ReadOnly = True
+        RowDetailPanel.Color = clBtnFace
+        RowHeight = 2
+        RowLines = 1
+        RowSizingAllowed = True
+        SearchPanel.FilterOnTyping = True
+        SumList.Active = True
+        TabOrder = 0
+        TitleParams.Color = 16119285
+        TitleParams.Font.Charset = DEFAULT_CHARSET
+        TitleParams.Font.Color = clWindowText
+        TitleParams.Font.Height = -11
+        TitleParams.Font.Name = 'Noto Sans'
+        TitleParams.Font.Style = []
+        TitleParams.HorzLines = True
+        TitleParams.MultiTitle = True
+        TitleParams.ParentFont = False
+        VertScrollBar.SmoothStep = True
+        OnColumnMoved = dbgDaftarColumnMoved
+        OnDblClick = dbgDaftarDblClick
+        OnKeyPress = dbgDaftarKeyPress
+        OnTitleClick = dbgDaftarTitleClick
+        object RowDetailData: TRowDetailPanelControlEh
+        end
+      end
+    end
+    object pnlBottom: TPanel
+      Left = 0
+      Top = 0
+      Width = 892
+      Height = 49
+      Align = alTop
+      BevelInner = bvRaised
+      BevelOuter = bvLowered
+      TabOrder = 0
+      object pnlCari: TPanel
+        Left = 2
+        Top = 2
+        Width = 533
+        Height = 45
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 0
+        DesignSize = (
+          533
+          45)
+        object btnRefresh: TAdvToolButton
+          Left = 384
+          Top = 7
+          Width = 83
+          Height = 31
+          Anchors = [akTop, akRight]
+          AutoThemeAdapt = False
+          Color = 39422
+          ColorDown = 27887
+          ColorHot = 4303871
+          Caption = '&REFRESH'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -9
+          Font.Name = 'Noto Sans'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = _RefreshExecute
+          Version = '1.6.2.0'
+          TMSStyle = 0
+        end
+        object lblKeyword: TLabel
+          Left = 8
+          Top = 15
+          Width = 58
+          Height = 15
+          Caption = 'Pencarian'
+          Color = clBtnFace
+          FocusControl = edtKeyword
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10956113
+          Font.Height = -12
+          Font.Name = 'Noto Sans'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          Transparent = True
+        end
+        object btnPilih: TAdvToolButton
+          Left = 384
+          Top = 7
+          Width = 83
+          Height = 31
+          Action = _Pilih
+          Anchors = [akTop, akRight]
+          AutoThemeAdapt = False
+          Color = 2250495
+          ColorDown = 1657574
+          ColorHot = 4288255
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -9
+          Font.Name = 'Noto Sans'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Version = '1.6.2.0'
+          TMSStyle = 0
+        end
+        object edtKeyword: TEdit
+          Left = 77
+          Top = 8
+          Width = 298
+          Height = 27
+          Anchors = [akLeft, akTop, akRight]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Arial'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          OnChange = edtKeywordChange
+          OnKeyDown = edtKeywordKeyDown
+          OnKeyPress = edtKeywordKeyPress
+          OnKeyUp = edtKeywordKeyUp
+        end
+      end
+      object pnlButton: TPanel
+        Left = 535
+        Top = 2
+        Width = 355
+        Height = 45
+        Align = alRight
+        BevelOuter = bvNone
+        TabOrder = 1
+        object btnTambah: TAdvToolButton
+          Left = 7
+          Top = 7
+          Width = 84
+          Height = 31
+          Action = _Insert
+          AutoThemeAdapt = False
+          Color = 5288012
+          ColorDown = 4034105
+          ColorHot = 7791873
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -9
+          Font.Name = 'Noto Sans'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Version = '1.6.2.0'
+          TMSStyle = 0
+        end
+        object btnUbah: TAdvToolButton
+          Left = 94
+          Top = 7
+          Width = 83
+          Height = 31
+          Action = _Edit
+          AutoThemeAdapt = False
+          Color = 16094753
+          ColorDown = 13858329
+          ColorHot = 16630847
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -9
+          Font.Name = 'Noto Sans'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Version = '1.6.2.0'
+          TMSStyle = 0
+        end
+        object btnHapus: TAdvToolButton
+          Left = 181
+          Top = 7
+          Width = 83
+          Height = 31
+          Action = _Delete
+          AutoThemeAdapt = False
+          Color = 3425267
+          ColorDown = 3027154
+          ColorHot = 5394943
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -9
+          Font.Name = 'Noto Sans'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Version = '1.6.2.0'
+          TMSStyle = 0
+        end
+        object btnCetak: TAdvToolButton
+          Left = 268
+          Top = 7
+          Width = 83
+          Height = 31
+          Action = _Cetak
+          AutoThemeAdapt = False
+          Color = 12008295
+          ColorDown = 10624890
+          ColorHot = 16731773
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -9
+          Font.Name = 'Noto Sans'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Version = '1.6.2.0'
+          TMSStyle = 0
+        end
+      end
+    end
+  end
+  inherited tmr1: TTimer
+    Interval = 1
+  end
+  object qryDaftar: TZQuery
+    AfterOpen = qryDaftarAfterOpen
+    AfterRefresh = qryDaftarAfterRefresh
+    OnFilterRecord = qryDaftarFilterRecord
+    AfterPost = qryDaftarAfterPost
+    AfterDelete = qryDaftarAfterDelete
+    OnDeleteError = qryDaftarPostError
+    OnPostError = qryDaftarPostError
+    ParamChar = '~'
+    Params = <>
+    Options = [doCalcDefaults, doDontSortOnPost]
+    Left = 112
+  end
+  object dsDaftar: TDataSource
+    DataSet = qryDaftar
+    OnStateChange = dsDaftarStateChange
+    OnDataChange = dsDaftarDataChange
+    Left = 144
+  end
+  object pmDaftar: TPopupMenu
+    OnPopup = pmDaftarPopup
+    Left = 264
+    object mniRefresh: TMenuItem
+      Action = _Refresh
+    end
+    object mniSep: TMenuItem
+      Caption = '-'
+    end
+    object mniTambah: TMenuItem
+      Action = _Insert
+    end
+    object mniUbah: TMenuItem
+      Action = _Edit
+    end
+    object mniHapus: TMenuItem
+      Action = _Delete
+    end
+    object mniN1: TMenuItem
+      Caption = '-'
+    end
+    object mniCetak: TMenuItem
+      Action = _Cetak
+    end
+  end
+  object actDaftar: TActionList
+    Left = 232
+    object _Refresh: TAction
+      Category = 'Data'
+      Caption = 'Refresh'
+      ImageIndex = 4
+      ShortCut = 116
+      OnExecute = _RefreshExecute
+    end
+    object _Insert: TAction
+      Category = 'Data'
+      Caption = '&TAMBAH'
+      ImageIndex = 1
+      ShortCut = 45
+      OnExecute = _InsertExecute
+    end
+    object _Edit: TAction
+      Category = 'Data'
+      Caption = '&UBAH'
+      Hint = 'Ubah'
+      ImageIndex = 2
+      ShortCut = 113
+      OnExecute = _EditExecute
+    end
+    object _Delete: TAction
+      Category = 'Data'
+      Caption = '&HAPUS'
+      Hint = 'Hapus'
+      ImageIndex = 3
+      ShortCut = 8238
+      OnExecute = _DeleteExecute
+    end
+    object _Cetak: TAction
+      Category = 'Cetak'
+      Caption = 'CETAK'
+      Hint = 'Cetak Laporan'
+      ImageIndex = 6
+      ShortCut = 16464
+      Visible = False
+      OnExecute = _CetakExecute
+    end
+    object _Lihat: TAction
+      Category = 'Data'
+      Caption = 'Lihat Detail'
+      Hint = 'Lihat Detail'
+      ImageIndex = 5
+    end
+    object _Layout: TAction
+      Category = 'Cetak'
+      Caption = 'Layout'
+      Hint = 'Atur Layout Laporan'
+      ImageIndex = 12
+      ShortCut = 24699
+      OnExecute = _LayoutExecute
+    end
+    object _Pilih: TAction
+      Category = 'Data'
+      Caption = '&PILIH'
+      ImageIndex = 8
+      ShortCut = 16397
+      Visible = False
+      OnExecute = _PilihExecute
+    end
+    object _OnGetTotal: TAction
+      Category = 'Event'
+      Caption = 'On Get Total'
+      OnExecute = _OnGetTotalExecute
+    end
+    object _OnDelete: TAction
+      Category = 'Event'
+      Caption = 'On Delete'
+    end
+    object _OnPrepareReport: TAction
+      Category = 'Event'
+      Caption = '_OnPrepareReport'
+      OnExecute = _OnPrepareReportExecute
+    end
+  end
+  object tmrCari: TTimer
+    Enabled = False
+    Interval = 300
+    OnTimer = tmrCariTimer
+    Left = 296
+  end
+end

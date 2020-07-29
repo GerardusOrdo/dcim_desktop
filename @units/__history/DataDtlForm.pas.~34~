@@ -1,0 +1,440 @@
+unit DataDtlForm;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DataForm, DBCtrls, ExtCtrls, ActnList, Menus, ZAbstractRODataset,
+  ZAbstractDataset, DB, ZDataset, ImgList, StdCtrls, Buttons, ComCtrls,
+  Grids, DBGrids, AdvMetroButton, AdvToolBtn, DateUtils,
+  AdvObj, BaseGrid, DBGridEhGrouping, ToolCtrlsEh,
+  DBGridEhToolCtrls, DynVarsEh, GridsEh, DBAxisGridsEh, DBGridEh, EhLibVCL, DBCtrlsEh,
+  System.Actions, System.ImageList;
+
+type
+  TfrmDataDtl = class(TfrmData)
+    pnlDetail: TPanel;
+    pnlPostCancel: TPanel;
+    pnlDtl: TPanel;
+    btnCancel: TAdvToolButton;
+    btnPost: TAdvToolButton;
+    btn1: TBitBtn;
+    procedure FormCreate(Sender: TObject);
+    procedure dsDaftarStateChange(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure pnlDetailResize(Sender: TObject);
+    procedure pnlPostCancelResize(Sender: TObject);
+    procedure dsDaftarDataChange(Sender: TObject; Field: TField);
+    procedure FormDestroy(Sender: TObject);
+    procedure qryDaftarBeforePost(DataSet: TDataSet);
+    procedure _InsertExecute(Sender: TObject);
+    procedure _EditExecute(Sender: TObject);
+    procedure _DeleteExecute(Sender: TObject);
+    procedure tmr1Timer(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure qryDaftarAfterDelete(DataSet: TDataSet);
+  private
+    { Private declarations }         
+    rDEdt : array of TDBEdit; rDTP : array of TDateTimePicker;
+    rTEdt : array of TDBEdit; rTTP : array of TDateTimePicker;
+    FPnlDetailVisible: Boolean;
+    procedure dtpDateChange(Sender: TObject);
+    procedure dtpTimeChange(Sender: TObject);
+    procedure SetPnlDetailVisible(const Value: Boolean);
+  protected
+    procedure ChangeDateEditor (const DBEdits: array of TDBEDit);    
+    procedure ChangeTimeEditor (const DBEdits: array of TDBEDit);
+  public
+    { Public declarations }   
+    //property PnlDetailVisible : Boolean read FPnlDetailVisible write SetPnlDetailVisible;
+  end;
+
+var
+  frmDataDtl: TfrmDataDtl;
+
+implementation
+
+uses BaseForm, DBActns, Style, ArManager;
+
+{$R *.dfm}
+
+procedure TfrmDataDtl.FormCreate(Sender: TObject);
+begin
+  inherited;
+     FPnlDetailVisible := pnlDetail.Visible;
+
+     pnlDetail.Visible := False;
+
+     btnPost.Action := TDataSetPost.Create (Self);
+     TDataSetPost (btnPost.Action).DataSource := dsDaftar;
+
+     btnCancel.Action := TDataSetCancel.Create (Self);
+     TDataSetCancel (btnCancel.Action).DataSource := dsDaftar;
+
+     SetGlyph(btnPost,   ibOK);
+     SetGlyph(btnCancel, ibCancel);
+
+     pnlDtl.Color := $00323639;
+     pnlPostCancel.Color := $00323639;
+end;
+
+procedure TfrmDataDtl.dsDaftarStateChange(Sender: TObject);
+     procedure EditMode (AParent:TWinControl;CanEdit:Boolean);
+     var i : Byte;   
+         c : TColor;
+     begin
+          if CanEdit then c := $00C5F9FF else c := clWindow;
+          with AParent do
+          if ControlCount > 0 then
+          for i := 0 to ControlCount-1 do    
+               //probably parent
+               if Controls[i] is TPanel then
+                    EditMode(TPanel(Controls[i]), CanEdit)
+               else if Controls[i] is TPageControl then
+                    EditMode(TPageControl(Controls[i]), CanEdit)
+               else if Controls[i] is TTabSheet then
+                    EditMode(TTabSheet(Controls[i]), CanEdit)
+               else if Controls[i] is TGroupBox then
+                    EditMode(TGroupBox(Controls[i]), CanEdit)
+               else
+               //if db component
+               if Controls[i] is TDBEdit then
+               with TDBEdit(Controls[i]) do
+               begin
+                    if Enabled then Color := c;
+                    ReadOnly := not CanEdit;
+               end else
+               if Controls[i] is TDBMemo then
+               with TDBMemo(Controls[i]) do
+               begin              
+                    if Enabled then Color := c;
+                    ReadOnly := not CanEdit;
+               end else
+               if Controls[i] is TDBCheckBox then
+               with TDBCheckBox(Controls[i]) do
+               begin              
+                    Color := c;
+                    Enabled := CanEdit;
+               end else    
+               if Controls[i] is TDBRadioGroup then
+               with TDBRadioGroup(Controls[i]) do
+               begin              
+                    Color := c;  
+                    ReadOnly := not CanEdit;
+               end else
+               if Controls[i] is TDBLookupComboBox then
+               with TDBLookupComboBox(Controls[i]) do
+               begin                            
+                    Color := c;
+                    ReadOnly := not CanEdit;
+                    Enabled := CanEdit;
+               end else
+               if Controls[i] is TDBComboBox then
+               with TDBComboBox(Controls[i]) do
+               begin                      
+                    Color := c;
+                    ReadOnly := not CanEdit;
+                    Enabled := CanEdit;
+               end else
+               if Controls[i] is TBitBtn then
+               with TBitBtn(Controls[i]) do
+               begin                      
+                    //Color := c;
+                    //ReadOnly := not UpdateMode;
+                    Enabled := CanEdit;
+               end else
+               if Controls[i] is TAdvToolButton then
+               with TAdvToolButton(Controls[i]) do
+               begin
+                    //Color := c;
+                    //ReadOnly := not UpdateMode;
+                    Enabled := CanEdit;
+                    if CanEdit then Color := $0050B04C else Color := $00E1E1E1;
+               end else
+               if Controls[i] is TDBComboBoxEh then
+               with TDBComboBoxEh(Controls[i]) do
+               begin                      
+                    Color := c;
+                    ReadOnly := not CanEdit;
+                    Enabled := CanEdit;
+               end;
+     end;
+var ib : Byte;
+    UpdateMode : Boolean;
+begin
+  inherited;
+     if not Showing then exit;
+     
+     UpdateMode := dsDaftar.State in [dsInsert, dsEdit];
+     if UpdateMode then
+          pnlDetail.Visible := True
+     else pnlDetail.Visible := FPnlDetailVisible;
+     //FitColGrid(dbgDaftar, dbgDaftar.Tag, FitColMinWidth);
+
+     btnPost.Visible := UpdateMode;
+     btnCancel.Visible := UpdateMode;
+
+     _Insert.Visible := not UpdateMode;
+     _Edit.Visible := not UpdateMode;
+     _Delete.Visible := not UpdateMode;
+
+     EditMode (pnlDtl, UpdateMode);
+               
+     //date
+     if Assigned (rDTP) then
+     for ib := Low(rDTP) to High (rDTP) do
+     begin
+          rDTP [ib].Visible := UpdateMode;
+          rDEdt[ib].Visible := not UpdateMode;
+          rDTP [ib].Enabled := rDEdt[ib].Enabled;
+          rDTP [ib].Color   := rDEdt[ib].Color;
+          
+          with dsDaftar.DataSet.FieldByName(rDEdt[ib].DataField) do
+          if UpdateMode and (not IsNull) then
+              rDTP [ib].Date := AsDateTime
+          else rDTP [ib].Date := Now;
+     end;  
+     //time
+     if Assigned (rTTP) then
+     for ib := Low(rTTP) to High (rTTP) do
+     begin
+          rTTP [ib].Visible := UpdateMode;
+          rTEdt[ib].Visible := not UpdateMode;
+          rTTP [ib].Enabled := rTEdt[ib].Enabled;
+          rTTP [ib].Color   := rTEdt[ib].Color;
+          
+          with dsDaftar.DataSet.FieldByName(rTEdt[ib].DataField) do
+          if UpdateMode and (not IsNull) then
+              rTTP [ib].Time := AsDateTime
+          else rTTP [ib].Time := Now;
+     end;
+end;
+
+procedure TfrmDataDtl.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+     if (Shift = [ssCtrl])and(Key = Ord('S')) then btnPost.Click;
+end;
+
+procedure TfrmDataDtl.pnlDetailResize(Sender: TObject);
+begin
+  inherited;
+     pnlButton.Width := pnlDetail.Width;
+     if pnlButton.Width < 330 then pnlButton.Width := 330;
+end;
+
+procedure TfrmDataDtl.pnlPostCancelResize(Sender: TObject);
+begin
+  inherited;
+     btnPost.Left := pnlPostCancel.Width - 122;
+     btnCancel.Left := pnlPostCancel.Width - 62;
+end;
+
+procedure TfrmDataDtl.dsDaftarDataChange(Sender: TObject; Field: TField);
+var ib : Byte;
+    FOnChange : TNotifyEvent;
+begin
+  inherited;    
+     _Cetak.Enabled := not dsDaftar.DataSet.IsEmpty;
+
+     if Assigned(Field) and Assigned (rDTP) and (dsDaftar.State in [dsInsert, dsEdit]) then
+     case Field.DataType of
+     ftDate :
+          for ib := Low(rDTP) to High (rDTP) do
+          if dsDaftar.DataSet.FieldByName(rDEdt[ib].DataField) = Field then
+          try
+               FOnChange := rDTP [ib].OnChange;
+               rDTP [ib].OnChange := nil;
+               rDTP [ib].Date := Field.AsDateTime
+          finally
+               rDTP [ib].OnChange := FOnChange;
+          end;
+     ftTime :
+          for ib := Low(rTTP) to High (rTTP) do
+          if dsDaftar.DataSet.FieldByName(rTEdt[ib].DataField) = Field then
+          try
+               FOnChange := rTTP [ib].OnChange;
+               rTTP [ib].OnChange := nil;
+               rTTP [ib].Time := Field.AsDateTime
+          finally
+               rTTP [ib].OnChange := FOnChange;
+          end
+     end;
+end;
+
+procedure TfrmDataDtl.FormDestroy(Sender: TObject);
+var i : Byte;
+begin
+  inherited;
+     //date
+     if Assigned (rDTP) then
+     for i := High(rDTP) downto Low (rDTP) do
+          FreeAndNil (rDTP[i]);
+     //time
+     if Assigned (rTTP) then
+     for i := High(rTTP) downto Low (rTTP) do
+          FreeAndNil (rTTP[i]);
+end;
+
+procedure TfrmDataDtl.ChangeDateEditor(const DBEdits: array of TDBEDit);
+var i : Byte;
+begin
+     if Assigned (rDTP) then
+     for i := High(rDTP) downto Low (rDTP) do
+          FreeAndNil (rDTP[i]);
+
+     i := Length (DBEdits);
+     SetLength (rDTP, i);     SetLength (rDEdt, i);
+     for i := Low(DBEdits) to High (DBEdits) do
+     begin
+          rDEdt[i] := DBEdits[i];
+          
+          rDTP[i] := TDateTimePicker.CreateParented(DBEdits[i].Parent.Handle);
+          rDTP[i].Parent := DBEdits[i].Parent; 
+          rDTP[i].DateFormat := dfLong; 
+          rDTP[i].Format := 'dd MMMM yyyy';
+          rDTP[i].Left := DBEdits[i].Left;
+          rDTP[i].Top := DBEdits[i].Top;
+          rDTP[i].Width := DBEdits[i].Width;
+          rDTP[i].Height := DBEdits[i].Height;   
+          rDTP[i].TabOrder := DBEdits[i].TabOrder;
+          rDTP[i].Visible := False;
+          rDTP[i].Tag := i;
+          rDTP[i].OnChange := dtpDateChange;
+     end;
+end;         
+
+procedure TfrmDataDtl.ChangeTimeEditor(const DBEdits: array of TDBEDit);
+var i : Byte;
+begin
+     if Assigned (rTTP) then
+     for i := High(rTTP) downto Low (rTTP) do
+          FreeAndNil (rTTP[i]);
+
+     i := Length (DBEdits);
+     SetLength (rTTP, i);     SetLength (rTEdt, i);
+     for i := Low(DBEdits) to High (DBEdits) do
+     begin
+          rTEdt[i] := DBEdits[i];
+          
+          rTTP[i] := TDateTimePicker.CreateParented(DBEdits[i].Parent.Handle);
+          rTTP[i].Parent := DBEdits[i].Parent;
+          //rTTP[i].DateFormat := dfLong;
+          rTTP[i].Kind := dtkTime;
+          rTTP[i].Left := DBEdits[i].Left;
+          rTTP[i].Top := DBEdits[i].Top;
+          rTTP[i].Width := DBEdits[i].Width;
+          rTTP[i].Height := DBEdits[i].Height;   
+          rTTP[i].TabOrder := DBEdits[i].TabOrder;
+          rTTP[i].Visible := False;
+          rTTP[i].Tag := i;
+          rTTP[i].OnChange := dtpTimeChange;
+     end;
+end;
+
+procedure TfrmDataDtl.qryDaftarBeforePost(DataSet: TDataSet);
+var i : Byte;
+begin
+     if Assigned (rDTP) then
+     for i := High(rDTP) to Low (rDTP) do
+     begin
+          with dsDaftar.DataSet.FieldByName(rDEdt[i].DataField) do
+          if IsNull then Value := rDTP [i].Date;
+     end;
+     if Assigned (rTTP) then
+     for i := High(rTTP) to Low (rTTP) do
+     begin
+          with dsDaftar.DataSet.FieldByName(rTEdt[i].DataField) do
+          if IsNull then Value := rTTP [i].Time;
+     end;
+
+     if dsDaftar.State in [dsInsert] then CreateLogData('insert data', Caption);
+     if dsDaftar.State in [dsEdit] then CreateLogData('edit data', Caption);
+  inherited;
+end;
+
+procedure TfrmDataDtl.dtpDateChange(Sender: TObject);
+begin
+  inherited;
+     rDEdt[TDateTimePicker(Sender).Tag].Field.Value :=
+          Trunc(TDateTimePicker(Sender).Date)+Frac(rDEdt[TDateTimePicker(Sender).Tag].Field.AsFloat);
+end;   
+
+procedure TfrmDataDtl.dtpTimeChange(Sender: TObject);
+begin
+  inherited;
+     rTEdt[TDateTimePicker(Sender).Tag].Field.Value :=
+          Trunc(rTEdt[TDateTimePicker(Sender).Tag].Field.AsFloat)+Frac(TDateTimePicker(Sender).Time);
+end;
+
+procedure TfrmDataDtl.SetPnlDetailVisible(const Value: Boolean);
+begin
+     FPnlDetailVisible := Value;
+     pnlDetail.Visible := Value;
+end;
+
+procedure TfrmDataDtl._InsertExecute(Sender: TObject);
+begin
+  inherited;
+     dsDaftar.DataSet.Insert;
+end;
+
+procedure TfrmDataDtl._EditExecute(Sender: TObject);
+begin
+  inherited;
+     dsDaftar.DataSet.Edit;
+end;
+
+procedure TfrmDataDtl._DeleteExecute(Sender: TObject);
+begin
+  inherited;
+     if Assigned(_OnDelete.OnExecute) then _OnDelete.Execute else dsDaftar.DataSet.Delete;
+end;
+
+procedure TfrmDataDtl.tmr1Timer(Sender: TObject);
+var
+  Pos : Integer;
+  pnlDtlHeightAwal : Integer;
+  pnlDtlLeftPos : Integer;
+  dbgridHeightAwal : Integer;
+begin
+  inherited;
+  try
+    tmr1.Enabled := False;
+    Animating := True;
+    pnlDtlHeightAwal := pnlDetail.Height; //sini
+    pnlDtlLeftPos := pnlDetail.Left;
+    dbgridHeightAwal := dbgDaftar.Height;
+  //  AnimateWindow(pnlBottom.Handle, 600, AW_SLIDE or AW_VER_POSITIVE or AW_ACTIVATE);
+    pnlDetail.Align := alCustom;
+    pnlDetail.Height := pnlDtlHeightAwal; //sini
+    pnlDetail.Left := pnlDtlLeftPos;
+    dbgDaftar.Align := alNone;
+    dbgDaftar.Height := dbgridHeightAwal;
+    dbgDaftar.Width := pnlData.Width - pnlDetail.Width;
+    Pos := 600;
+    pnlDetail.Left := pnlDetail.Left + Pos;
+    pnlDetail.Visible := True;
+    Anim_Slide(pnlDetail, QuintEaseOut, Horizontal, 600, -Pos);
+    if (Assigned(pnlDetail)) then pnlDetail.Align := alRight;
+  finally
+      Animating := False;
+      dbgDaftar.Align := alClient;
+  end;
+end;
+
+procedure TfrmDataDtl.FormShow(Sender: TObject);
+begin
+  inherited;
+  tmr1.Enabled := True;
+end;
+
+procedure TfrmDataDtl.qryDaftarAfterDelete(DataSet: TDataSet);
+begin
+  inherited;
+  CreateLogData('delete data', Caption);
+end;
+
+end.

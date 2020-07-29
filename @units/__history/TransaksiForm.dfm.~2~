@@ -1,0 +1,113 @@
+inherited frmTransaksi: TfrmTransaksi
+  Top = 116
+  Caption = '@Form Transaksi'
+  Constraints.MinHeight = 450
+  Constraints.MinWidth = 700
+  OldCreateOrder = False
+  Position = poMainFormCenter
+  PixelsPerInch = 96
+  TextHeight = 15
+  inherited pnlTitle: TPanel
+    inherited pnlClose: TPanel
+      inherited btnClose: TAdvToolButton
+        TMSStyle = 0
+      end
+    end
+  end
+  object pnlButton: TPanel [1]
+    Left = 0
+    Top = 420
+    Width = 684
+    Height = 44
+    Align = alBottom
+    BevelInner = bvLowered
+    TabOrder = 2
+    DesignSize = (
+      684
+      44)
+    object btnSimpan: TAdvToolButton
+      Left = 498
+      Top = 7
+      Width = 83
+      Height = 28
+      Anchors = [akTop, akRight]
+      AutoThemeAdapt = False
+      Color = 16094753
+      ColorDown = 10501937
+      ColorHot = 16565313
+      Caption = 'SIMPAN'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -9
+      Font.Name = 'Noto Sans'
+      Font.Style = []
+      ParentFont = False
+      Version = '1.6.2.0'
+      TMSStyle = 0
+    end
+    object btnBatal: TAdvToolButton
+      Left = 587
+      Top = 7
+      Width = 83
+      Height = 28
+      Anchors = [akTop, akRight]
+      AutoThemeAdapt = False
+      Color = 3425267
+      ColorDown = 3027154
+      ColorHot = 5460991
+      Caption = 'BATAL'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -9
+      Font.Name = 'Noto Sans'
+      Font.Style = []
+      ParentFont = False
+      OnClick = btnBatalClick
+      Version = '1.6.2.0'
+      TMSStyle = 0
+    end
+  end
+  object pnlTrans: TPanel [2]
+    Left = 0
+    Top = 28
+    Width = 684
+    Height = 392
+    Align = alClient
+    BevelOuter = bvNone
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Noto Sans'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    OnEnter = pnlTransEnter
+  end
+  inherited tmr1: TTimer
+    Interval = 1
+    OnTimer = tmr1Timer
+  end
+  object actTrans: TActionList
+    Left = 32
+    object _OnClearForm: TAction
+      Category = 'Event'
+      Caption = 'On Get Total'
+    end
+    object _OnAfterSaved: TAction
+      Caption = 'On Delete'
+    end
+    object _OnLoad: TAction
+      Category = 'Event'
+      Caption = '_OnLoad'
+    end
+    object _DoSave: TAction
+      Caption = 'Simpan'
+      ShortCut = 16467
+      OnExecute = _DoSaveExecute
+    end
+    object _OnValidasiInput: TAction
+      Category = 'Event'
+      Caption = '_OnValidasiInput'
+    end
+  end
+end

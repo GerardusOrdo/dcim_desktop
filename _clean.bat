@@ -1,0 +1,13 @@
+del *.~*
+del *.dcu
+del *.ddp
+del dcu\*.dcu
+del @units\*.~*
+del @units\*.dcu
+del @units\*.ddp
+del @sampah\*.~*
+del @sampah\*.dcu
+del @sampah\*.ddp
+del x-unit\*.~*
+del x-unit\*.dcu
+del x-unit\*.ddp

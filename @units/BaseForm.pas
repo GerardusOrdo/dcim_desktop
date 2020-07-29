@@ -1,0 +1,164 @@
+unit BaseForm;
+
+interface
+
+uses
+  TypeUnit, Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
+  Forms, Menus, Dialogs, ImgList, Buttons, ExtCtrls, ActnList, Grids, DBGrids,
+  IniFiles, Style, AdvToolBtn, System.ImageList;
+type
+  NImgBtn = (ibClose, ibAdd, ibEdit, ibDelete, ibRefresh, ibDetail,
+             ibPrint, ibSave, ibOK, ibCancel, ibPreview, ibFind,
+             ibLayout, ibDate, ibDatePrev, ibDateNext, ibLoad,
+             ibFilter, ibCheck, ibNone, ibDb, ibGo, ibClear,
+             ibFileFind, ibSetting, ibReplace, ibCapture);
+  TfrmBase = class(TForm)
+    pnlTitle: TPanel;
+    pnlClose: TPanel;
+    ilBtn: TImageList;
+    tmr1: TTimer;
+    btnClose: TAdvToolButton;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure btnCloseClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+  private
+    FActionSender : TAction;
+    function SetTitle (s:string):string;
+    function GetWindowState: TWindowState;
+    procedure SetWindowState(const Value: TWindowState);
+    { Private declarations }
+  protected
+    Animating : Boolean;
+    procedure SetHeader(Pnl:TPanel;Title:string;const ImgList:TCustomImageList;Idx:Smallint=-1); overload;
+    procedure SetHeader(const AAction:TAction); overload;
+    procedure SetGlyph (const btn:TObject;idx:Integer); overload;
+    procedure SetGlyph (const btn:TObject;idx:NImgBtn); overload;     
+    property ChangeWindowState : TWindowState read GetWindowState write SetWindowState;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmBase: TfrmBase;
+
+implementation
+
+uses ArFunctions, ArComponents, MenuUtamaUnit;
+
+{$R *.dfm}
+
+procedure TfrmBase.SetHeader(const AAction: TAction);
+begin
+     FActionSender := AAction;
+     SetHeader (pnlTitle, Caption, AAction.ActionList.Images, AAction.ImageIndex);
+end;
+
+procedure TfrmBase.SetHeader (Pnl:TPanel; Title:string;const ImgList:TCustomImageList;Idx:Smallint=-1);
+var img : TImage;
+begin
+     if ImgList = nil then
+     begin
+          TPanel(Pnl).Caption := '   '+SetTitle(Title);
+          TPanel(Pnl).Height := 30;
+          exit;
+     end;
+     TPanel(Pnl).Caption := '              '+SetTitle(Title);
+     TPanel(Pnl).Height := 36;
+
+     img := TImage.Create (Pnl);
+     img.Parent := Pnl;
+     img.Left := 2;
+     img.Top := 2;
+     img.Width := 32;//bmp.Width;
+     img.Height := 32;//bmp.Height;
+     img.Canvas.Brush.Color := TPanel(Pnl).Color;
+     img.Canvas.FillRect(Rect(0,0,img.Width,img.Height));
+
+     ImgList.GetBitmap(Idx, img.Picture.Bitmap);
+end;
+
+procedure TfrmBase.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+     Action := caFree;
+end;
+
+procedure TfrmBase.FormCreate(Sender: TObject);
+begin
+     SetGlyph (btnClose, ibClose);
+     pnlTitle.Color := WarnaThemeBase(icBaseFormColor);
+     pnlTitle.Font.Color := WarnaThemeBase(icTitleFontColor);
+     btnClose.Color := pnlTitle.Color;
+     btnClose.ColorHot := clRed;
+     btnClose.ColorDown := clRed;
+end;
+
+procedure TfrmBase.FormDestroy(Sender: TObject);
+begin
+     Screen.Cursor := crDefault;
+end;
+         
+procedure TfrmBase.SetGlyph(const btn: TObject; idx: Integer);
+begin
+     if (btn <> nil) then SetGlyphBtn(btn, ilBtn, idx);
+end;  
+
+procedure TfrmBase.SetGlyph(const btn: TObject; idx: NImgBtn);
+begin
+     if (btn <> nil) then SetGlyphBtn(btn, ilBtn, Integer(idx));
+end;
+
+procedure TfrmBase.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+     case Ord(Key) of
+     VK_ESCAPE : btnClose.Click;
+     VK_RETURN :
+          begin
+               Key := #0;
+               if (ActiveControl is TDBGrid) then Key := chr(VK_TAB)
+               else
+               if GetKeyState(VK_Shift) and $8000 <> 0 then
+                    PostMessage(Handle, WM_NEXTDLGCTL, 1, 0)
+               else PostMessage(Handle, WM_NEXTDLGCTL, 0, 0);
+          end;
+     end;
+end;
+
+procedure TfrmBase.btnCloseClick(Sender: TObject);
+begin
+     Close;
+end;
+
+function TfrmBase.GetWindowState: TWindowState;
+begin                  
+     Result := WindowState;
+end;
+
+procedure TfrmBase.SetWindowState(const Value: TWindowState);
+var i : Word;
+begin
+     if WindowState = Value then Exit;
+
+     for i := Screen.FormCount -1 downto 0 do
+     with Screen.Forms[i] do
+     if ( FormStyle = fsMDIChild )and(WindowState = wsMaximized) then exit;
+
+     WindowState := Value;
+end;
+
+function TfrmBase.SetTitle(s: string): string;
+begin
+     Result := StringReplace(s, '&','&&', [rfReplaceAll]);
+end;
+
+procedure TfrmBase.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := not Animating;
+end;
+
+end.
+
+

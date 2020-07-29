@@ -1,0 +1,91 @@
+unit TransaksiForm;
+
+interface                               
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, BaseForm, ExtCtrls, StdCtrls, Buttons, Grids, DBGrids, DB,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, ImgList, ActnList,
+  AdvToolBtn, System.Actions, System.ImageList;
+
+type
+  TfrmTransaksi = class(TfrmBase)
+    pnlButton: TPanel;
+    pnlTrans: TPanel;
+    actTrans: TActionList;
+    _OnClearForm: TAction;
+    _OnAfterSaved: TAction;
+    _OnLoad: TAction;
+    _DoSave: TAction;
+    _OnValidasiInput: TAction;
+    btnSimpan: TAdvToolButton;
+    btnBatal: TAdvToolButton;
+    procedure btnBatalClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure pnlTransEnter(Sender: TObject);
+    procedure _DoSaveExecute(Sender: TObject);
+    procedure tmr1Timer(Sender: TObject);
+  protected
+    ThisID : Variant;
+    SedangInput, ShowReadOnly : Boolean;
+    { Private declarations }
+  end;
+
+var
+  frmTransaksi: TfrmTransaksi;
+
+implementation
+
+uses ArComponents, ArDBModule, Style;
+
+{$R *.dfm}
+
+procedure TfrmTransaksi.btnBatalClick(Sender: TObject);
+begin
+     if (ShowReadOnly or not SedangInput) then
+     begin
+          ModalResult := mrCancel;
+          Close;
+     end;
+end;
+
+procedure TfrmTransaksi.FormCreate(Sender: TObject);
+begin
+     inherited;
+     SetGlyph(btnSimpan,ibSave);
+     SetGlyph(btnBatal, ibCancel);
+end;
+
+procedure TfrmTransaksi.pnlTransEnter(Sender: TObject);
+begin
+  inherited;
+     SedangInput := True;
+end;
+
+procedure TfrmTransaksi._DoSaveExecute(Sender: TObject);
+begin
+  inherited;
+     if btnSimpan.Enabled and btnSimpan.Visible then btnSimpan.Click;
+end;
+
+procedure TfrmTransaksi.tmr1Timer(Sender: TObject);
+var
+  Pos : Integer;
+begin
+  inherited;
+  try
+    Animating := True;
+    tmr1.Enabled := False;
+  //  AnimateWindow(pnlBottom.Handle, 600, AW_SLIDE or AW_VER_POSITIVE or AW_ACTIVATE);
+    Pos := 600;
+    pnlTrans.Align := alCustom;
+    pnlTrans.Left := pnlTrans.Left - Pos;
+    pnlTrans.Visible := True;
+    Anim_Slide(pnlTrans, QuintEaseOut, Horizontal, 600, Pos);
+    pnlTrans.Align := alClient;
+  finally
+    Animating := False;
+  end;
+end;
+
+end.

@@ -1,0 +1,59 @@
+unit DialogUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, Buttons, BaseForm, ImgList, AdvToolBtn;
+
+type
+  TfrmDialog = class(TfrmBase)
+    pnlButton: TPanel;
+    pnlData: TPanel;
+    btnOK: TAdvToolButton;
+    btnBatal: TAdvToolButton;
+    btn1: TBitBtn;
+    procedure FormCreate(Sender: TObject);
+    procedure btnBatalClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmDialog: TfrmDialog;
+
+implementation
+
+uses TypeUnit, Style;
+
+{$R *.dfm}
+
+procedure TfrmDialog.FormCreate(Sender: TObject);
+begin
+     inherited;
+     pnlTitle.Visible := DIALOGFORM_HEADER_VISIBLE;
+     if DIALOGFORM_HEADER_VISIBLE then
+          pnlTitle.Align := alTop
+     else pnlButton.Color := pnlTitle.Color;
+     SetGlyph(btnOK, ibOK);
+     SetGlyph(btnBatal, ibCancel);
+end;
+
+procedure TfrmDialog.btnBatalClick(Sender: TObject);
+begin
+  inherited;
+  Close;
+end;
+
+procedure TfrmDialog.FormActivate(Sender: TObject);
+var
+  Pos : Integer;
+begin
+  
+  inherited;
+end;
+
+end.

@@ -1,0 +1,448 @@
+inherited frmDataTrans: TfrmDataTrans
+  Left = 306
+  Caption = '@Data For Transaksi'
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 14
+  inherited pnlTitle: TPanel
+    inherited pnlClose: TPanel
+      inherited btnClose: TAdvToolButton
+        TMSStyle = 0
+      end
+    end
+  end
+  inherited pnlData: TPanel
+    Left = 297
+    Width = 595
+    TabOrder = 2
+    inherited pnlGrid: TPanel
+      Width = 595
+      inherited ftrDaftar: TStatusBar
+        Width = 595
+      end
+      inherited dbgDaftar: TDBGridEh
+        Width = 595
+        Columns = <
+          item
+            CellButtons = <>
+            DynProps = <>
+            EditButtons = <>
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footers = <>
+            Width = 12
+          end>
+      end
+    end
+    inherited pnlBottom: TPanel
+      Width = 595
+      inherited pnlButton: TPanel [0]
+        Left = 202
+        Height = 34
+        Align = alNone
+        Visible = False
+        inherited btnTambah: TAdvToolButton
+          TMSStyle = 0
+        end
+        inherited btnUbah: TAdvToolButton
+          TMSStyle = 0
+        end
+        inherited btnHapus: TAdvToolButton
+          TMSStyle = 0
+        end
+        inherited btnCetak: TAdvToolButton
+          TMSStyle = 0
+        end
+      end
+      inherited pnlCari: TPanel [1]
+        Width = 591
+        DesignSize = (
+          591
+          45)
+        inherited btnRefresh: TAdvToolButton
+          Left = 432
+          TMSStyle = 0
+        end
+        inherited btnPilih: TAdvToolButton
+          Left = 432
+          TMSStyle = 0
+        end
+        inherited edtKeyword: TEdit
+          Width = 345
+        end
+      end
+    end
+  end
+  object pnlOption: TPanel [2]
+    Left = 0
+    Top = 28
+    Width = 297
+    Height = 433
+    Align = alLeft
+    TabOrder = 1
+    object pnlOptButton: TPanel
+      Left = 1
+      Top = 131
+      Width = 295
+      Height = 228
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      object btnOptHapus: TAdvToolButton
+        Tag = 3
+        Left = 129
+        Top = 35
+        Width = 122
+        Height = 30
+        Action = _Delete
+        AutoThemeAdapt = False
+        Color = 3425267
+        ColorDown = 3026644
+        ColorHot = 5460991
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnOptUbah: TAdvToolButton
+        Tag = 2
+        Left = 0
+        Top = 35
+        Width = 121
+        Height = 30
+        Action = _Edit
+        AutoThemeAdapt = False
+        Color = 11882815
+        ColorDown = 10501937
+        ColorHot = 16674132
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnOptTambah: TAdvToolButton
+        Tag = 1
+        Left = 0
+        Top = 0
+        Width = 121
+        Height = 31
+        Action = _Insert
+        AutoThemeAdapt = False
+        Color = 5418828
+        ColorDown = 4034103
+        ColorHot = 11464809
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnOptLihat: TAdvToolButton
+        Tag = 1
+        Left = 129
+        Top = 0
+        Width = 122
+        Height = 31
+        Action = _Lihat
+        AutoThemeAdapt = False
+        Color = 6495978
+        ColorDown = 5969858
+        ColorHot = 8471039
+        Caption = 'LIHAT DETAIL'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnOptCetak: TAdvToolButton
+        Tag = 1
+        Left = 0
+        Top = 69
+        Width = 121
+        Height = 31
+        Action = _Cetak
+        AutoThemeAdapt = False
+        Color = 12008295
+        ColorDown = 10956113
+        ColorHot = 16731773
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnOptReprint: TAdvToolButton
+        Tag = 1
+        Left = 129
+        Top = 69
+        Width = 122
+        Height = 31
+        Action = _Reprint
+        AutoThemeAdapt = False
+        Color = 16099587
+        ColorDown = 13731842
+        ColorHot = 16761919
+        Caption = 'CETAK NOTA'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+    end
+    object pnlOptTanggal: TPanel
+      Left = 1
+      Top = 1
+      Width = 295
+      Height = 130
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 0
+      object lblDari: TLabel
+        Left = 0
+        Top = 13
+        Width = 19
+        Height = 14
+        Caption = 'Dari'
+        FocusControl = dtp1
+      end
+      object lblSampai: TLabel
+        Left = 0
+        Top = 39
+        Width = 35
+        Height = 14
+        Caption = 'Sampai'
+        FocusControl = dtp2
+      end
+      object btnThisMonth: TAdvToolButton
+        Left = 61
+        Top = 61
+        Width = 129
+        Height = 26
+        Action = _ThisMonth
+        AutoThemeAdapt = False
+        Color = 16094753
+        ColorDown = 13858329
+        ColorHot = 16681539
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnFilter: TAdvToolButton
+        Left = 198
+        Top = 8
+        Width = 53
+        Height = 49
+        Action = _Filter
+        AutoThemeAdapt = False
+        Color = 2250750
+        ColorDown = 1657574
+        ColorHot = 4288255
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        Layout = blGlyphTop
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnPrevMonth: TAdvToolButton
+        Left = 0
+        Top = 61
+        Width = 53
+        Height = 26
+        Action = _PrevMonth
+        AutoThemeAdapt = False
+        Color = 11610268
+        ColorDown = 10624890
+        ColorHot = 16531680
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnNextMonth: TAdvToolButton
+        Left = 198
+        Top = 61
+        Width = 53
+        Height = 26
+        Action = _NextMonth
+        AutoThemeAdapt = False
+        Color = 11610268
+        ColorDown = 10624890
+        ColorHot = 16531680
+        Layout = blGlyphTop
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnPrevDay: TAdvToolButton
+        Left = 0
+        Top = 95
+        Width = 53
+        Height = 26
+        Action = _PrevDay
+        AutoThemeAdapt = False
+        Color = 11610268
+        ColorDown = 10624890
+        ColorHot = 16531680
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnToday: TAdvToolButton
+        Left = 61
+        Top = 95
+        Width = 129
+        Height = 26
+        Action = _Today
+        AutoThemeAdapt = False
+        Color = 16094753
+        ColorDown = 13858329
+        ColorHot = 16681539
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -9
+        Font.Name = 'Noto Sans'
+        Font.Style = []
+        ParentFont = False
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object btnNextDay: TAdvToolButton
+        Left = 198
+        Top = 95
+        Width = 53
+        Height = 26
+        Action = _NextDay
+        AutoThemeAdapt = False
+        Color = 11610268
+        ColorDown = 10624890
+        ColorHot = 16531680
+        Layout = blGlyphTop
+        Version = '1.6.2.0'
+        TMSStyle = 0
+      end
+      object dtp1: TDateTimePicker
+        Left = 61
+        Top = 8
+        Width = 129
+        Height = 21
+        Date = 41571.429345138890000000
+        Time = 41571.429345138890000000
+        DateFormat = dfLong
+        TabOrder = 0
+      end
+      object dtp2: TDateTimePicker
+        Left = 61
+        Top = 35
+        Width = 129
+        Height = 21
+        Date = 41571.429383009260000000
+        Time = 41571.429383009260000000
+        DateFormat = dfLong
+        TabOrder = 1
+      end
+    end
+  end
+  inherited tmr1: TTimer
+    OnTimer = tmr1Timer
+  end
+  inherited pmDaftar: TPopupMenu
+    object mniLihat: TMenuItem [1]
+      Action = _Lihat
+    end
+  end
+  inherited actDaftar: TActionList
+    object _ThisMonth: TAction [5]
+      Category = 'Option'
+      Caption = 'Bulan ini'
+      Hint = 'Bulan ini'
+      ImageIndex = 13
+      OnExecute = _ThisMonthExecute
+    end
+    object _PrevMonth: TAction [6]
+      Category = 'Option'
+      Hint = 'Bulan sebelumnya'
+      ImageIndex = 14
+      OnExecute = _ThisMonthExecute
+    end
+    object _NextMonth: TAction [7]
+      Category = 'Option'
+      Hint = 'Bulan berikutnya'
+      ImageIndex = 15
+      OnExecute = _ThisMonthExecute
+    end
+    object _Today: TAction [8]
+      Category = 'Option'
+      Caption = 'Hari ini'
+      Hint = 'Hari ini'
+      ImageIndex = 13
+      OnExecute = _ThisMonthExecute
+    end
+    object _PrevDay: TAction [9]
+      Category = 'Option'
+      Hint = 'Hari sebelumnya'
+      ImageIndex = 14
+      OnExecute = _ThisMonthExecute
+    end
+    object _NextDay: TAction [10]
+      Category = 'Option'
+      Hint = 'Hari berikutnya'
+      ImageIndex = 15
+      OnExecute = _ThisMonthExecute
+    end
+    object _Filter: TAction [11]
+      Category = 'Option'
+      Caption = 'Filter'
+      Hint = 'Filter data'
+      ImageIndex = 17
+    end
+    object _Reprint: TAction [16]
+      Category = 'Cetak'
+      Caption = 'Cetak Nota'
+      ImageIndex = 6
+      Visible = False
+      OnExecute = _ReprintExecute
+    end
+    object _LayoutNota: TAction [17]
+      Category = 'Cetak'
+      Caption = 'Layout'
+      Hint = 'Atur Layout Laporan'
+      ImageIndex = 12
+      ShortCut = 24698
+    end
+  end
+  object udtDaftar: TZUpdateSQL
+    UseSequenceFieldForRefreshSQL = False
+    Left = 352
+    Top = 144
+  end
+end

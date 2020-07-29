@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style Name="">
+  <item Name="Nama" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-19" Font.Name="Segoe UI" Font.Style="1"/>
+  <item Name="Alamat" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Segoe UI" Font.Style="1"/>
+  <item Name="Judul" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-19" Font.Name="Segoe UI" Font.Style="1"/>
+  <item Name="SubJudul" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Segoe UI" Font.Style="1"/>
+  <item Name="GrupHeader" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial Narrow" Font.Style="1"/>
+  <item Name="GrupFooter" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial Narrow" Font.Style="1"/>
+  <item Name="MasterHeader" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial Narrow" Font.Style="1" Frame.Typ="15"/>
+  <item Name="MasterData" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial Narrow" Font.Style="0" Frame.Typ="15"/>
+  <item Name="MasterFooter" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial Narrow" Font.Style="1" Frame.Typ="15"/>
+  <item Name="PageFooter" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-12" Font.Name="Arial Narrow" Font.Style="2"/>
+  <item Name="GroupHeaderLine" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial Narrow" Font.Style="5"/>
+  <item Name="NamaDiNota" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-16" Font.Name="Segoe UI" Font.Style="1"/>
+  <item Name="AlamatDiNota" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Segoe UI" Font.Style="1"/>
+  <item Name="Sumary" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-12" Font.Name="Arial Narrow" Font.Style="1"/>
+  <item Name="Tertanda" Color="536870911" Font.Charset="0" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial Narrow" Font.Style="1" Frame.Typ="4"/>
+</style>
