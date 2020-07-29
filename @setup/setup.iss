@@ -3,8 +3,8 @@
 
 [Setup]
 AppName=DCIM OPD
-AppVerName=DCIM OPD version 1.1.3
-AppVersion=1.1.3
+AppVerName=DCIM OPD version 1.1.4
+AppVersion=1.1.4
 AppPublisher=Gerardus Ordo
 DefaultDirName={pf}\GerardusOrdo\DCIM OPD
 ;DisableDirPage=yes
@@ -13,7 +13,7 @@ DefaultGroupName=Aplikasi DCIM OPD
 ;InfoBeforeFile=D:\PROJECTS\@@setup\@forsetup\bacasaya.txt
 ;InfoAfterFile=D:\PROJECTS\@Base Project\bin\bacasaya.txt
 OutputDir=G:\Desktop\_installer\@setup\DCIM OPD
-OutputBaseFilename=DCIM_OPD_v1.1.3_Setup
+OutputBaseFilename=DCIM_OPD_v1.1.4_Setup
 SetupIconFile=G:\Desktop\DCIM\bin\images\application.ico
 UninstallDisplayName=DCIM OPD
 UninstallDisplayIcon=G:\Desktop\DCIM\bin\images\icon.ico
